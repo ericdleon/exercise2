@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style type="text/css">
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map1 {
+        height: 325px;
+        width: 600px;
+        margin-bottom: 10px;
+      }
+      #map2 {
+        height: 325px;
+        width: 600px;
+      }
+      .borderProp {
+        border: 2px solid black;
+        border-left: 10px solid black;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .category {
+        width: 75px;
+        float: left;
+      }
+      img {
+        height: 25px;
+        width: 25px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <form name="myForm" id="myForm">
+        <p>
+          Show Category:
+          <input type="radio" name="category" value="yes" checked />Yes
+          <input type="radio" name="category" value="no" />No
+        </p>
+        <p>
+          <input
+            type="checkbox"
+            name="whatToShow"
+            id="Building"
+            value="Building"
+            checked
+          />
+          Building
+          <input
+            type="checkbox"
+            name="whatToShow"
+            id="Parking"
+            value="Parking"
+            checked
+          />
+          Parking
+          <input
+            type="checkbox"
+            name="whatToShow"
+            id="Restaurant"
+            value="Restaurant"
+            checked
+          />
+          Restaurant
+          <input
+            type="checkbox"
+            name="whatToShow"
+            id="Store"
+            value="Store"
+            checked
+          />
+          Store
+          <input type="submit" value="Update" />
+        </p>
+      </form>
+    </div>
+
+    <div id="map1"></div>
+    <div id="map2"></div>
+
+    <script>
+      var locationObj1 = {
+        locName: "Krauszer's Food Store",
+        category: 'Store',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '70 Guilden St, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj2 = {
+        locName: 'College Farms Foodmart',
+        category: 'Store',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '138 Easton Ave, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj3 = {
+        locName: 'Easton Grill Express Bagel',
+        category: 'Restaurant',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '194 Easton Ave, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj4 = {
+        locName: 'La Catrina',
+        category: 'Restaurant',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '144 Easton Ave, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj5 = {
+        locName: 'Parking Lot 12',
+        category: 'Parking',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: 'Parking Lot 12, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj6 = {
+        locName: 'College Farms Foodmart',
+        category: 'Parking',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '138 Easton Ave, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj7 = {
+        locName: 'Verve New Brunswick',
+        category: 'Building',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '88 Easton Ave, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj8 = {
+        locName: 'RHL Limited',
+        category: 'Building',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '64 Stone St, New Brunswick, NJ 08901',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+
+      var locationObj1_2 = {
+        locName: 'Advanced Auto Parts',
+        category: 'Store',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '555 Delsea Dr N, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj2_2 = {
+        locName: "Bob's Little Sport Shop",
+        category: 'Store',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '316 Delsea Dr, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj3_2 = {
+        locName: 'Landmark Americana',
+        category: 'Restaurant',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '1 Mullica Hill Rd, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj4_2 = {
+        locName: 'Popeyes Louisiana Kitchen',
+        category: 'Restaurant',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '332 Delsea Dr N, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj5_2 = {
+        locName: 'Lot O',
+        category: 'Parking',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '153 N Campus Dr, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj6_2 = {
+        locName: 'Edgewood Park Parking Lot',
+        category: 'Parking',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '201 Mullica Hill Rd, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj7_2 = {
+        locName: 'Rowan University Department Of Environmental Health & Safety',
+        category: 'Building',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '85 Girard Rd N, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+      var locationObj8_2 = {
+        locName: 'Rowan University Student Health Center',
+        category: 'Building',
+        info:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae felis et eros dictum vestibulum. Proin lectus libero, egestas id massa eu, dapibus elementum justo. Aenean tincidunt, libero pulvinar maximus auctor, dolor est finibus nisi, in ullamcorper dui velit eget ex. Proin ultricies id tortor commodo imperdiet. Proin in dui imperdiet, interdum purus id, cursus mi. Aliquam non est at arcu viverra viverra ac sit amet justo. Aliquam orci felis, auctor sit amet commodo id, pulvinar at elit. Aenean diam mi, lacinia in pulvinar nec, ornare vel sapien. Mauris vel dolor libero. Sed sagittis condimentum velit vitae fringilla. Ut mollis mauris et vehicula cursus. Duis bibendum ex nisi, vel rutrum justo dictum ut. In ut suscipit felis. Proin interdum rutrum elit, id suscipit quam. Nulla facilisi.',
+        address: '201 Mullica Hill Rd, Glassboro, NJ 08028',
+        position: { lat: 0, lng: 0 },
+        mapToUse: 'map1',
+      }
+
+      var locationArray1 = [
+        locationObj1,
+        locationObj2,
+        locationObj3,
+        locationObj4,
+        locationObj5,
+        locationObj6,
+        locationObj7,
+        locationObj8,
+      ]
+      var locationArray2 = [
+        locationObj1_2,
+        locationObj2_2,
+        locationObj3_2,
+        locationObj4_2,
+        locationObj5_2,
+        locationObj6_2,
+        locationObj7_2,
+        locationObj8_2,
+      ]
+
+      var markers1 = []
+      var markers2 = []
+
+      var map1
+      var map2
+
+      // create map
+      function initMap() {
+        const styledMapType = new google.maps.StyledMapType(
+          [
+            { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+            {
+              elementType: 'labels.text.stroke',
+              stylers: [{ color: '#242f3e' }],
+            },
+            {
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#746855' }],
+            },
+            {
+              featureType: 'administrative.locality',
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#d59563' }],
+            },
+            {
+              featureType: 'poi',
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#d59563' }],
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'geometry',
+              stylers: [{ color: '#263c3f' }],
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#6b9a76' }],
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{ color: '#38414e' }],
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry.stroke',
+              stylers: [{ color: '#212a37' }],
+            },
+            {
+              featureType: 'road',
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#9ca5b3' }],
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{ color: '#746855' }],
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry.stroke',
+              stylers: [{ color: '#1f2835' }],
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#f3d19c' }],
+            },
+            {
+              featureType: 'transit',
+              elementType: 'geometry',
+              stylers: [{ color: '#2f3948' }],
+            },
+            {
+              featureType: 'transit.station',
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#d59563' }],
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{ color: '#17263c' }],
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.fill',
+              stylers: [{ color: '#515c6d' }],
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.stroke',
+              stylers: [{ color: '#17263c' }],
+            },
+          ],
+          { name: 'Dark Mode' }
+        )
+        const centerPos1 = { lat: 40.4999662, lng: -74.4540758 }
+        const centerPos2 = { lat: 39.7113665, lng: -75.1169525 }
+        map1 = new google.maps.Map(document.getElementById('map1'), {
+          center: centerPos1,
+          zoom: 15,
+          minZoom: 15,
+          maxZoom: 15,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          draggable: false,
+          scrollwheel: false,
+          mapTypeControlOptions: {
+            mapTypeIds: [
+              'roadmap',
+              'satellite',
+              'hybrid',
+              'terrain',
+              'styled_map',
+            ],
+          },
+        })
+        map2 = new google.maps.Map(document.getElementById('map2'), {
+          center: centerPos2,
+          zoom: 14,
+          minZoom: 14,
+          maxZoom: 14,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          draggable: false,
+          scrollwheel: false,
+          mapTypeControlOptions: {
+            mapTypeIds: [
+              'roadmap',
+              'satellite',
+              'hybrid',
+              'terrain',
+              'styled_map',
+            ],
+          },
+        })
+
+        map1.mapTypes.set('styled_map', styledMapType)
+        map2.mapTypes.set('styled_map', styledMapType)
+
+        var geocoderToUse = new google.maps.Geocoder()
+
+        automateGeocodePlaceMarker(
+          geocoderToUse,
+          0,
+          locationArray1,
+          map1,
+          markers1
+        )
+        automateGeocodePlaceMarker(
+          geocoderToUse,
+          0,
+          locationArray2,
+          map2,
+          markers2
+        )
+
+        function automateGeocodePlaceMarker(
+          geocoderUse,
+          locIndex,
+          locArray,
+          mapToUse,
+          markerArrayUse
+        ) {
+          var locationObjUse = locArray[locIndex]
+          geocoderUse.geocode(
+            { address: locationObjUse.address },
+            function (result, status) {
+              if (status == 'OK') {
+                locationObjUse.position = result[0].geometry.location
+                placeMarker(locationObjUse, mapToUse, markerArrayUse)
+                var newLocIndex = locIndex + 1
+                if (newLocIndex < locArray.length) {
+                  automateGeocodePlaceMarker(
+                    geocoderUse,
+                    newLocIndex,
+                    locArray,
+                    mapToUse,
+                    markerArrayUse
+                  )
+                }
+              } else {
+                console.log(
+                  'Geocode was not successful for the following reason: ' +
+                    status
+                )
+                setTimeout(function () {
+                  automateGeocodePlaceMarker(
+                    geocoderUse,
+                    locIndex,
+                    locArray,
+                    mapToUse,
+                    markerArrayUse
+                  )
+                }, 1000)
+              }
+            }
+          )
+        }
+      }
+      var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/'
+      var icons = {
+        Store: {
+          icon: iconBase + 'info-i.png',
+        },
+        Building: {
+          icon: iconBase + 'homegardenbusiness_maps.png',
+        },
+        Restaurant: {
+          icon: iconBase + 'library_maps.png',
+        },
+        Parking: {
+          icon: iconBase + 'parking_lot_maps.png',
+        },
+      }
+      // define function placeMarker
+      function placeMarker(locationObj, mapToUse, markerArray) {
+        var marker = new google.maps.Marker({
+          position: locationObj.position,
+          map: mapToUse,
+          icon: icons[locationObj.category].icon,
+          title: locationObj.locName,
+        })
+        markerArray.push(marker)
+        var h2String = '<h2>' + locationObj.locName + '</h2>'
+        var categoryString =
+          '<p class="category">' + locationObj.category + '</p>'
+        var infoString = '<p>' + locationObj.info + '</p>'
+        marker.addListener('click', function () {
+          var showCategory = document.forms['myForm']['category'].value
+          var contentString =
+            '<div class="borderProp">' +
+            h2String +
+            categoryString +
+            infoString +
+            '</div>'
+          if (showCategory == 'no') {
+            contentString =
+              '<div class="borderProp">' + h2String + infoString + '</div>'
+          }
+          var infoWindow = new google.maps.InfoWindow({
+            content: contentString,
+            maxWidth: 400,
+          })
+          infoWindow.open(mapToUse, marker)
+        })
+      }
+      var myForm = document.getElementById('myForm')
+      myForm.addEventListener('submit', updateMap)
+      function updateMap(event) {
+        event.preventDefault()
+        console.log('Form Submitted')
+        updateThisMap(map1, locationArray1, markers1)
+        updateThisMap(map2, locationArray2, markers2)
+      }
+      function updateThisMap(mapToUse, locArray, markerArray) {
+        for (i = 0; i < locArray.length; i++) {
+          var currentLocation = locArray[i]
+          var currentMarker = markerArray[i]
+          var currentCategory = currentLocation.category
+          if (document.getElementById(currentCategory).checked) {
+            currentMarker.setMap(mapToUse)
+          } else {
+            currentMarker.setMap(null)
+          }
+        }
+      }
+    </script>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDS_U9-gLsJijq2LDvzeUxmcycPbLZ5Plw&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+  </body>
+</html>
